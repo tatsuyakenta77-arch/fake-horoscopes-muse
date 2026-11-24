@@ -23,19 +23,25 @@ const PUNCH = " The stars say your halo is buffering.";
 const HOROSCOPE: string = OPENER + WEEK + PUNCH;
 
 const MAX_CHARS = 200;
+const MIN_CHARS = 1;
 
-function main(): void {
-  // Gate: the entry must be UTF-8 text of 1 to 200 characters, not only
-  // white space — enforce it here so a bad text fails loudly, never silently.
-  const chars = [...HOROSCOPE].length;
-  if (chars < 1 || chars > MAX_CHARS) {
+// Gate: the entry must be UTF-8 text of 1 to 200 characters, not only
+// white space — enforce it here so a bad text fails loudly, never silently.
+function assertValidHoroscope(text: string): number {
+  const chars = [...text].length;
+  if (chars < MIN_CHARS || chars > MAX_CHARS) {
     throw new Error(
-      `horoscope is ${chars} characters, must be 1-${MAX_CHARS}`,
+      `horoscope is ${chars} characters, must be ${MIN_CHARS}-${MAX_CHARS}`,
     );
   }
-  if (HOROSCOPE.trim().length === 0) {
+  if (text.trim().length === 0) {
     throw new Error("horoscope is only white space");
   }
+  return chars;
+}
+
+function main(): void {
+  const chars = assertValidHoroscope(HOROSCOPE);
 
   const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "./output";
   mkdirSync(outDir, { recursive: true });
